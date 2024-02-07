@@ -1,0 +1,17 @@
+﻿@page "/Recipes"
+@model BarManagement.Web.Pages.DisplayAllRecipesModel
+@{
+}
+ 
+<h1>Recipes: </h1>
+
+<a asp-page="/AddRecipe" class="btn btn-primary btn-sm  mb-3  mt-3 ">
+	Add New Recipe
+</a>
+
+
+
+@foreach (var r in Model.recipes)  
+{		
+	<a asp-page="/RecipeDetail"  asp-route-id="@r.RecipeId" ><h4>@r.Title</h4></a>	
+}

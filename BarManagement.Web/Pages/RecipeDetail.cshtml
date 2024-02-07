@@ -1,0 +1,50 @@
+﻿@page "/RecipeDetail/{Id}"
+@model BarManagement.Web.Pages.RecipeDetailModel
+@{
+}
+
+<form method="post">
+<div  class="mb-3">
+   <h1>@Model.RecipeTitle</h1>
+
+   <h5>@Model.RecipeDescription</h5>
+</div>
+
+<div>
+    <h4  class="mb-2">Ingredients: </h4>
+    <ul>
+    @foreach(var  i  in   @Model.Ingredients)
+    {	
+      <li>
+		@(i.Quantity.ToString().TrimStart('0'))
+		@i.Unit
+		@i.IngredientName
+	  </li>
+     }
+    </ul>
+</div>
+
+
+<div>
+   <h3>Steps: </h3>
+
+   <ol>
+      @foreach (var i in @Model.Instructions)
+      {
+    	<li>	
+	       @i.Description	
+    	</li>
+      }
+    </ol>
+</div>
+
+<a asp-page="/DisplayAllRecipes" class="btn btn-primary btn-sm  mb-3  mt-3 ">
+    Back
+</a>
+
+
+    <input type="submit" value="Delete Recipe" asp-page-handler="Delete" class=" btn btn-sm btn-danger " />
+
+    <a asp-page="/EditRecipe" asp-route-id="@Model.Id"  class=" btn btn-sm btn-primary " >Edit Recipe</a>
+
+</form>

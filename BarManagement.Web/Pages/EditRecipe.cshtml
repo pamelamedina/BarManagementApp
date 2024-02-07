@@ -1,0 +1,205 @@
+﻿@page "/EditRecipe/{Id}"
+@model BarManagement.Web.Pages.EditRecipeModel
+@{
+}
+
+<h1>Edit Recipe</h1>
+
+<form method="post" class="form-inline">
+
+    <!-- in Recipe Table    -->
+    <div class="col-10">
+        <h3>Recipe: </h3>
+    </div>
+    <input type="hidden" asp-for="Recipe.RecipeId"  />
+    <div class="row" id="recipeGroup">
+        <div class="form-group col-md-6">
+            <label asp-for="Recipe.Title">Title </label>
+            <input class="form-control" asp-for="Recipe.Title" />
+        </div>
+
+        <div class="form-group col-md-6 ">
+            <label asp-for="Recipe.Description">Description </label>
+            <input class="form-control" asp-for="Recipe.Description" />
+        </div>
+    </div>
+
+
+
+    <!-- Ingredient Area   -->
+    <div class="row   mt-5 mb-2">
+        <div class="col-2">
+            <h3>Ingredients: </h3>
+        </div>
+
+        <div class="col-2 mt-1">
+            <button id="addRow" type="button" class="btn btn-primary ">Add Ingredient</button>
+        </div>
+
+    </div>
+
+
+    <div class="row">
+        <h4 class="col-5">
+            Name
+        </h4>
+        <h4 class="col-2">
+            Quantity
+        </h4>
+        <h4 class="col-2">
+            Unit
+        </h4>
+
+    </div>
+
+    <div id="newRow">
+        <input type="hidden" id="total" value="0" />
+    </div>
+
+    <!--    Ingredient Area  END -->
+    <!-- in Instruction Table    -->
+
+
+    <div class="row   mt-5 mb-2">
+        <div class="col-2">
+            <h3>Instructions: </h3>
+        </div>
+
+        <div class="col-2 mt-1">
+            <button id="addInstructionRow" type="button" class="btn btn-primary ">Add Instruction</button>
+        </div>
+
+    </div>
+
+    <h4>Preparation Step: </h4>
+    <div id="newInstructionRow">
+        <input type="hidden" id="instructionTotal" value="0" />
+    </div>
+
+    <input type="submit" value="Update Recipe" asp-page-handler="Update"  asp-route-id="Id" class=" btn btn-sm btn-danger " />
+   
+</form>
+
+
+@section Scripts
+    {
+    <script>
+
+        //-------------------------------------
+        // Add Ingredient Rows
+        //-------------------------------------
+        $("#addRow").click(function () {
+            var rowCount = parseInt($("#total").val());
+            rowCount++;
+            $("#total").val(rowCount);
+            var html = '';
+
+            html += '<div id="inputRow" class="ingredientGroup   row mt-3 mb-3 "  >'
+            html += '   <div class="form-group  col-md-5" > ';
+            html += '       <input class="form-control"    id="Ingredients[' + (rowCount - 1) + '].IngredientName"                name="Ingredients[' + (rowCount - 1) + '].IngredientName"   asp-for="Ingredients[' + (rowCount - 1) + '].IngredientName"  />'
+            html += '  </div>';
+            html += '<div class="form-group col-md-2" > ';
+            html += '    <input class="form-control"       id="Ingredients[' + (rowCount - 1) + '].Quantity"        name="Ingredients[' + (rowCount - 1) + '].Quantity"  asp-for="Ingredients[' + (rowCount - 1) + '].Quantity" maxlength="5" />'
+            html += '</div>';
+
+            html += '<div class="form-group col-md-2"  >';
+            html += '   <select class="form-select"  id="Ingredients[' + (rowCount - 1) + '].Unit"                 name="Ingredients[' + (rowCount - 1) + '].Unit"   asp-for="Ingredients[' + (rowCount - 1) + '].Unit">'
+            html += '        <option value="cup">cup</option>';
+            html += '        <option value="oz">oz</option>';
+            html += '        <option value="jigger">jigger</option>';
+            html += '   </select>';
+            html += '</div>';
+            html += '<div class="form-group col-md-1" >'
+            html += '   <button id="removeRow" type="button" class="btn btn-danger btn-sm ">Remove</button>';
+            html += '</div>';
+            html += '</div>';
+
+            $('#newRow').append(html);
+        });
+
+        //Remove Ingredient Rows
+        $(document).on('click', '#removeRow', function () {
+            var rowCount = parseInt($("#total").val());
+            rowCount--;
+            $("#total").val(rowCount);
+            $(this).closest('#inputRow').remove();
+        });
+
+
+
+        //-------------------------------------------
+        //Add Instruction  Rows
+        //--------------------------------------------
+
+        $("#addInstructionRow").click(function () {
+            var instructionRowCount = parseInt($("#instructionTotal").val());
+            instructionRowCount++;
+            $("#instructionTotal").val(instructionRowCount);
+            var html = '';
+
+            html += '<div id="inputInstructionRow" class="instructionGroup row mt-3 mb-3"  >'
+            html += '   <div class="form-group  col-md-5" > ';
+            html += '       <input class="form-control" name="Instructions[' + (instructionRowCount - 1) + '].Description"   asp-for="Instructions[' + (instructionRowCount - 1) + '].Description"  />'
+            html += '  </div>';
+            html += '<div class="form-group col-md-1" >'
+            html += '   <button id="removeInstructionRow" type="button" class="btn btn-danger btn-sm ">Remove</button>';
+            html += '</div>';
+            html += '</div>';
+
+            $('#newInstructionRow').append(html);
+        });
+
+        //Remove Instruction Rows
+        $(document).on('click', '#removeInstructionRow', function () {
+            var instructionRowCount = parseInt($("#instructionTotal").val());
+            instructionRowCount--;
+            $("#instructionTotal").val(instructionRowCount);
+            $(this).closest('#inputInstructionRow').remove();
+        });
+
+        //$("#addRow").trigger('click');
+
+        //$("#addInstructionRow").trigger('click');
+
+
+        var numberOfIngredients = @Model.Ingredients.Count;
+        var numberOfInstructions = @Model.Instructions.Count;
+        var ingredientsArray = @Html.Raw(Json.Serialize(Model.Ingredients));
+        var instructionsArray = @Html.Raw(Json.Serialize(Model.Instructions));
+        console.log(ingredientsArray);
+        console.log(ingredientsArray[0]);
+        console.log(instructionsArray);
+        console.log(instructionsArray[0]);
+       
+
+        for (var i = 0; i < numberOfIngredients; i++) {          
+            $("#addRow").trigger('click');
+            //ingredientsArray[i].IngredientName
+            $('#newRow input[name="Ingredients[' + i + '].IngredientName"]').val(ingredientsArray[i].ingredientName);
+            $('#newRow input[name="Ingredients[' + i + '].Quantity"]').val(ingredientsArray[i].quantity);
+            $('#newRow select[name="Ingredients[' + i + '].Unit"]').val(ingredientsArray[i].unit);
+        }
+
+
+        for (var i = 0; i < numberOfInstructions; i++) {
+            $("#addInstructionRow").trigger('click');
+           
+            $('#newInstructionRow input[name="Instructions[' + i + '].Description"]').val(instructionsArray[i].description);
+         
+        }
+
+
+
+
+       
+     
+
+
+    </script>
+}
+
+
+
+
+
+
